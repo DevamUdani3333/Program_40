@@ -5,6 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import pyrebase
+from requests.exceptions import RequestException
 
 config = {
     "apiKey": 'AIzaSyCDGOP8ZoR4gSZuzBfGUbyMm9rXb-PoEG4',
@@ -36,6 +37,17 @@ class Crawler:
         self.query = query
         self.search_url = f"https://www.google.com/search?q={query}"
         self.links = []
+        print(self.search_url)
+
+    def fetch(self, url):
+        try:
+            headers = {'User-Agent': 'Mozilla/5.0'}
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()   
+        except RequestException as e:
+            print(f"Error: {e}")
+            return None
+        return response
 
     def get_links(self):
         response = requests.get(self.search_url, headers={"User-Agent": "Mozilla/5.0"})
